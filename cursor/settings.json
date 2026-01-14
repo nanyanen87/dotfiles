@@ -1,0 +1,8 @@
+{
+    "window.commandCenter": true,
+    "claudeCode.environmentVariables": [
+
+    ],
+    "chatgpt.openOnStartup": true,
+    "claudeCode.preferredLocation": "panel"
+}
