@@ -10,7 +10,9 @@
       "Bash(ls:*)",
       "Bash(npx tsc:*)",
       "Bash(sed:*)",
-      "Bash"
+      "Bash",
+      "Skill(git:commit)",
+      "Skill(git:commit:*)"
     ],
     "deny": [
       "Bash(rm:*)"

@@ -4,5 +4,6 @@
 
     ],
     "chatgpt.openOnStartup": true,
-    "claudeCode.preferredLocation": "panel"
+    "claudeCode.preferredLocation": "panel",
+    "git.confirmSync": false
 }
