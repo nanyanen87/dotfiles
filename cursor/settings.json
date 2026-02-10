@@ -5,5 +5,9 @@
     ],
     "chatgpt.openOnStartup": true,
     "claudeCode.preferredLocation": "panel",
-    "git.confirmSync": false
+    "git.confirmSync": false,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "git.openRepositoryInParentFolders": "always"
 }
