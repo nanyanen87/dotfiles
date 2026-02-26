@@ -3,7 +3,9 @@ allowed-tools: Bash, AskUserQuestion
 description: "Codex CLI で GitHub PR をレビュー（引数: [owner/repo#]PR番号）"
 ---
 
-GitHub PR をレビューします。引数 `$ARGUMENTS` に PR 番号（オプションでリポジトリ）が渡されます。
+GitHub PR を **Codex CLI** でレビューします。引数 `$ARGUMENTS` に PR 番号（オプションでリポジトリ）が渡されます。
+
+**IMPORTANT**: このスキルは Codex CLI (`codex exec`) を使って PR レビューを実行する専用スキルです。Claude Code の内蔵エージェント（`feature-dev:code-reviewer` 等）や Task ツールで代替してはいけません。必ず Step 3 の `codex exec` コマンドを実行してください。
 
 ## 引数フォーマット
 

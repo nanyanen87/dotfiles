@@ -15,7 +15,9 @@
       "Skill(git:commit:*)",
       "WebFetch(domain:supabase.com)",
       "mcp__plugin_context7_context7__resolve-library-id",
-      "mcp__plugin_supabase_supabase__list_tables"
+      "mcp__plugin_supabase_supabase__list_tables",
+      "Skill(codex-review)",
+      "Skill(codex-review:*)"
     ],
     "deny": [
       "Bash(rm:*)"
@@ -30,9 +32,12 @@
     "feature-dev@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
-    "supabase@claude-plugins-official": true,
-    "github@claude-plugins-official": true
+    "supabase@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "claudeInChromeDefaultEnabled": false
+  "claudeInChromeDefaultEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/n-hana/.claude/statusline-command.sh"
+  }
 }
