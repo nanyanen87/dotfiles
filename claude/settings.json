@@ -17,11 +17,74 @@
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_supabase_supabase__list_tables",
       "Skill(codex-review)",
-      "Skill(codex-review:*)"
+      "Skill(codex-review:*)",
+      "Read(//Users/n-hana/dev/stremix/backend/**)",
+      "Edit(//Users/n-hana/dev/stremix/backend/**)",
+      "Read(//Users/n-hana/dev/stremix/cms/**)",
+      "Edit(//Users/n-hana/dev/stremix/cms/**)",
+      "Read(//Users/n-hana/dev/stremix/service-client/**)",
+      "Edit(//Users/n-hana/dev/stremix/service-client/**)",
+      "Read(//Users/n-hana/dev/stremix/stremix-client/**)",
+      "Edit(//Users/n-hana/dev/stremix/stremix-client/**)",
+      "Read(//Users/n-hana/dev/stremix/data-manager/**)",
+      "Edit(//Users/n-hana/dev/stremix/data-manager/**)",
+      "Read(//Users/n-hana/dev/stremix/remix-editor-v2/**)",
+      "Edit(//Users/n-hana/dev/stremix/remix-editor-v2/**)",
+      "Skill(r2-access)",
+      "Skill(r2-access:*)",
+      "Skill(supabase-access)",
+      "Skill(supabase-access:*)",
+      "Read(//Users/n-hana/dev/stremix/cms/src/features/users/works/components/**)",
+      "Read(//Users/n-hana/dev/stremix/**)",
+      "Skill(cron-job-runner)",
+      "Skill(cron-job-runner:*)",
+      "Read(//Users/n-hana/.codex/prompts/**)",
+      "Read(//Users/n-hana/dotfiles/codex/prompts/**)",
+      "WebFetch(domain:tanstack.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Skill(code-review:code-review)",
+      "Skill(code-review:code-review:*)",
+      "mcp__plugin_context7_context7__query-docs",
+      "WebFetch(domain:atlasgo.io)",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "mcp__plugin_supabase_supabase__execute_sql",
+      "Read(//Users/n-hana/.claude/commands/**)",
+      "Read(//Users/n-hana/dotfiles/claude/commands/**)",
+      "Skill(codex-review-pr)",
+      "Skill(codex-review-pr:*)",
+      "Read(//Users/n-hana/.claude/**)",
+      "WebFetch(domain:docs.ibk-dev.ops-frontier.dev)",
+      "WebFetch(domain:localhost)",
+      "mcp__plugin_supabase_supabase__search_docs",
+      "WebFetch(domain:jpyc-support.freshdesk.com)",
+      "WebFetch(domain:polygonscan.com)"
     ],
     "deny": [
       "Bash(rm:*)"
+    ],
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "/Users/n-hana/dev/stremix/cms/",
+      "/Users/n-hana/dev/stremix/cms-wt/",
+      "/Users/n-hana/dev/stremix/service-client/",
+      "/Users/n-hana/dev/stremix/service-client-wt/",
+      "/Users/n-hana/dev/stremix/stremix-client/",
+      "/Users/n-hana/dev/stremix/stremix-client-wt/",
+      "/Users/n-hana/dev/stremix/data-manager/",
+      "/Users/n-hana/dev/stremix/remix-editor-v2/",
+      "/Users/n-hana/dev/stremix/backend/",
+      "/Users/n-hana/dev/stremix/backend-wt/",
+      "/Users/n-hana/dev/stremix/cms-wt/feat/rename-banned-to-rejected/src/features/users/works/components",
+      "/Users/n-hana/dev/stremix/service-client/app/api/queries",
+      "/Users/n-hana/dev/stremix/backend-wt",
+      "/Users/n-hana/dev/stremix/stremix-client-wt/issues/104/app/api"
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/n-hana/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true,
@@ -34,10 +97,8 @@
     "commit-commands@claude-plugins-official": true,
     "supabase@claude-plugins-official": true
   },
+  "language": "japanese",
   "alwaysThinkingEnabled": true,
   "claudeInChromeDefaultEnabled": false,
-  "statusLine": {
-    "type": "command",
-    "command": "bash /Users/n-hana/.claude/statusline-command.sh"
-  }
+  "effortLevel": "high"
 }

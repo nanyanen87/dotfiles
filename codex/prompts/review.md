@@ -1,6 +1,8 @@
 # Working Tree Review
 
-You are an expert code reviewer. Review the current working tree changes, focusing on behavior changes and missing tests.
+You are an expert code reviewer. Review the current working tree changes, focusing on behavior changes, correctness, and security.
+
+**Important**: Do NOT flag missing tests. Test coverage is reviewed separately via a dedicated audit. Focus exclusively on the code itself.
 
 ## Review Process
 
@@ -27,18 +29,26 @@ git status --short
 - Logic errors or bugs
 - Edge cases not handled
 - Proper error handling
-
-**Test Coverage**
-
-- Are new features tested?
-- Are edge cases covered?
-- Do existing tests still pass?
+- Type safety issues
 
 **Security Considerations**
 
 - Input validation
 - Authentication/authorization
 - Data exposure risks
+- Injection vulnerabilities (SQL, XSS, command)
+
+**Performance**
+
+- Algorithmic complexity regressions
+- N+1 queries or unnecessary DB calls
+- Missing early returns or short-circuits
+
+**Convention Adherence**
+
+- Read `AGENTS.md` (if present) for project-specific rules
+- Naming conventions and file organization
+- Layer boundary violations
 
 ### 3. Prioritized Feedback
 
@@ -52,15 +62,16 @@ Structure your findings by priority:
 
 **P1 - Important** (should fix)
 
-- Missing tests for new behavior
 - Performance regressions
 - Error handling gaps
+- Type safety issues
+- Convention violations
 
 **P2 - Minor** (consider fixing)
 
 - Style inconsistencies
-- Documentation gaps
 - Minor optimizations
+- Naming improvements
 
 ## Output Format
 
@@ -70,4 +81,4 @@ Provide a concise summary of issues found, organized by priority. For each issue
 - Explain the problem clearly
 - Suggest a concrete fix
 
-Focus only on actionable issues. Do not summarize what the changes do.
+Focus only on actionable issues. Do not summarize what the changes do. If no issues are found, say "No issues found."

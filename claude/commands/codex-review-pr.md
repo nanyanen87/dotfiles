@@ -64,24 +64,28 @@ fi
 
 ### Step 3: Codex でレビュー実行
 
+**重要**: diff をプロンプトに埋め込まない。Codex は `--full-auto` でコマンドを実行できるので、Codex 自身に `gh pr diff` を実行させる。埋め込むとトークンが浪費され実行時間が大幅に増加する。
+
 ```bash
 # 前のステップで取得した REPO と PR_NUM を使用
 PROMPT=$(cat ~/.codex/prompts/review-pr.md)
 
 if [ -n "$REPO" ]; then
-  DIFF=$(gh pr diff "$PR_NUM" -R "$REPO")
-else
-  DIFF=$(gh pr diff "$PR_NUM")
-fi
+  codex exec --full-auto "$PROMPT
 
-codex exec --full-auto "$PROMPT
-
-## PR Diff:
-\`\`\`diff
-$DIFF
-\`\`\`
+対象: $REPO の PR #$PR_NUM
+gh pr diff $PR_NUM -R $REPO で diff を取得してレビューしてください。
 "
+else
+  codex exec --full-auto "$PROMPT
+
+対象: PR #$PR_NUM
+gh pr diff $PR_NUM で diff を取得してレビューしてください。
+"
+fi
 ```
+
+**注意**: `codex exec` はフォアグラウンド（`timeout: 300000`）で実行すること。バックグラウンドだとユーザーが次のメッセージを送るまで完了通知が届かず、会話が止まる。
 
 レビュー結果をユーザーに報告してください。
 
