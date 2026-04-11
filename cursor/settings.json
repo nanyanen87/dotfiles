@@ -10,5 +10,5 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "git.openRepositoryInParentFolders": "always",
-    "claudeCode.selectedModel": "default"
+    "claudeCode.selectedModel": "opus[1m]"
 }

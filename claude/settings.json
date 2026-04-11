@@ -82,6 +82,28 @@
       "/Users/n-hana/dev/stremix/stremix-client-wt/issues/104/app/api"
     ]
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/n-hana/.claude/hooks/grep-glob-lint.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /Users/n-hana/.claude/hooks/gh-pr-base-lint.sh"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash /Users/n-hana/.claude/statusline-command.sh"
@@ -95,10 +117,13 @@
     "feature-dev@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
-    "supabase@claude-plugins-official": true
+    "supabase@claude-plugins-official": true,
+    "linear@claude-plugins-official": true
   },
   "language": "japanese",
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "advisorModel": "opus",
   "claudeInChromeDefaultEnabled": false,
-  "effortLevel": "high"
+  "model": "sonnet[1m]"
 }

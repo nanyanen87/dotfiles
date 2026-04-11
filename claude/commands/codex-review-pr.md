@@ -47,24 +47,22 @@ else
 fi
 ```
 
-### Step 2: PR の情報と diff を取得
+### Step 2: PR の情報を取得
 
 ```bash
 # 前のステップで取得した REPO と PR_NUM を使用
 if [ -n "$REPO" ]; then
-  # リポジトリ指定あり
   gh pr view "$PR_NUM" -R "$REPO" --json title,body,baseRefName,headRefName
-  gh pr diff "$PR_NUM" -R "$REPO"
 else
-  # 現在のリポジトリを使用
   gh pr view "$PR_NUM" --json title,body,baseRefName,headRefName
-  gh pr diff "$PR_NUM"
 fi
 ```
 
 ### Step 3: Codex でレビュー実行
 
-**重要**: diff をプロンプトに埋め込まない。Codex は `--full-auto` でコマンドを実行できるので、Codex 自身に `gh pr diff` を実行させる。埋め込むとトークンが浪費され実行時間が大幅に増加する。
+**重要**: diff をプロンプトに埋め込まない。Codex は `--full-auto` でコマンドを実行できるので、Codex 自身に diff を取得させる。埋め込むとトークンが浪費され実行時間が大幅に増加する。
+
+diff の取得には `gh pr diff` ではなく `git diff` を使う。`.gitattributes` の `linguist-generated=true` パターンをシェルコマンドで自動抽出し、生成物ファイルを除外する。
 
 ```bash
 # 前のステップで取得した REPO と PR_NUM を使用
@@ -74,13 +72,25 @@ if [ -n "$REPO" ]; then
   codex exec --full-auto "$PROMPT
 
 対象: $REPO の PR #$PR_NUM
-gh pr diff $PR_NUM -R $REPO で diff を取得してレビューしてください。
+以下の手順で diff を取得してレビューしてください:
+
+1. gh pr view $PR_NUM -R $REPO --json baseRefName,headRefName で base/head ブランチ名を取得
+2. git fetch origin <base> <head>
+3. 以下のコマンドで .gitattributes の linguist-generated=true パターンを除外して diff を取得:
+   EXCLUDES=\$(grep -E 'linguist-generated\s*=\s*true' .gitattributes 2>/dev/null | awk '{print \":(exclude)\" \$1}')
+   git diff origin/<base>...origin/<head> -- \$EXCLUDES
 "
 else
   codex exec --full-auto "$PROMPT
 
 対象: PR #$PR_NUM
-gh pr diff $PR_NUM で diff を取得してレビューしてください。
+以下の手順で diff を取得してレビューしてください:
+
+1. gh pr view $PR_NUM --json baseRefName,headRefName で base/head ブランチ名を取得
+2. git fetch origin <base> <head>
+3. 以下のコマンドで .gitattributes の linguist-generated=true パターンを除外して diff を取得:
+   EXCLUDES=\$(grep -E 'linguist-generated\s*=\s*true' .gitattributes 2>/dev/null | awk '{print \":(exclude)\" \$1}')
+   git diff origin/<base>...origin/<head> -- \$EXCLUDES
 "
 fi
 ```
