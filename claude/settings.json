@@ -30,6 +30,9 @@
       "Edit(//Users/n-hana/dev/stremix/data-manager/**)",
       "Read(//Users/n-hana/dev/stremix/remix-editor-v2/**)",
       "Edit(//Users/n-hana/dev/stremix/remix-editor-v2/**)",
+      "Read(//Users/n-hana/ghq/github.com/stremix-jp/speech-ai/**)",
+      "Edit(//Users/n-hana/ghq/github.com/stremix-jp/speech-ai/**)",
+      "Write(//Users/n-hana/ghq/github.com/stremix-jp/speech-ai/**)",
       "Skill(r2-access)",
       "Skill(r2-access:*)",
       "Skill(supabase-access)",
@@ -76,6 +79,7 @@
       "/Users/n-hana/dev/stremix/remix-editor-v2/",
       "/Users/n-hana/dev/stremix/backend/",
       "/Users/n-hana/dev/stremix/backend-wt/",
+      "/Users/n-hana/ghq/github.com/stremix-jp/speech-ai/",
       "/Users/n-hana/dev/stremix/cms-wt/feat/rename-banned-to-rejected/src/features/users/works/components",
       "/Users/n-hana/dev/stremix/service-client/app/api/queries",
       "/Users/n-hana/dev/stremix/backend-wt",
@@ -114,16 +118,18 @@
     "context7@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "supabase@claude-plugins-official": true,
-    "linear@claude-plugins-official": true
+    "linear@claude-plugins-official": true,
+    "cloudflare@claude-plugins-official": true
   },
   "language": "japanese",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "advisorModel": "opus",
+  "theme": "dark",
+  "preferredNotifChannel": "iterm2",
   "claudeInChromeDefaultEnabled": false,
-  "model": "sonnet[1m]"
+  "model": "opus"
 }
