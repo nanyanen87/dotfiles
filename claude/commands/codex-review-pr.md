@@ -1,170 +1,61 @@
 ---
-allowed-tools: Bash, AskUserQuestion
+allowed-tools: Bash, Read, AskUserQuestion
 description: "Codex CLI で GitHub PR をレビュー（引数: [owner/repo#]PR番号）"
 ---
 
-GitHub PR を **Codex CLI** でレビューします。引数 `$ARGUMENTS` に PR 番号（オプションでリポジトリ）が渡されます。
+GitHub PR を **Codex CLI** で第三者レビューする。
+レビュー観点は `~/.codex/AGENTS.md` で定義（Codex が自動ロード）。
+実行ロジックは `~/.claude/scripts/codex-review-pr.sh` に分離。
 
-**IMPORTANT**: このスキルは Codex CLI (`codex exec review`) を使って PR レビューを実行する専用スキルです。Claude Code の内蔵エージェント（`feature-dev:code-reviewer` 等）や Task ツールで代替してはいけません。必ず Step 3 の `codex exec review` コマンドを実行してください。
+**IMPORTANT**: このコマンドは Codex CLI による独立レビューを目的とする。
+Claude Code 内蔵エージェントや Task ツールでの代替は禁止。必ず Step 2 のスクリプトを実行する。
 
 ## 引数フォーマット
 
-以下のフォーマットをサポート:
-- `123` - 現在のリポジトリの PR #123
-- `owner/repo#123` - 指定リポジトリの PR #123
-- `owner/repo 123` - 指定リポジトリの PR #123
+- `123` — 現在のリポジトリの PR #123
+- `owner/repo#123` / `owner/repo 123`
+- `<repo-name> 123` — `~/dev/<*>/<repo-name>` から自動解決
+- `https://github.com/owner/repo/pull/123`
 
 ## 手順
 
-### Step 1: 引数をパース
+### Step 1: 引数チェック
 
-引数からリポジトリと PR 番号を抽出:
+`$ARGUMENTS` が空の場合のみ AskUserQuestion で PR 番号を確認する。
+それ以外は引数をそのままスクリプトに渡す（パースはスクリプト側で実施）。
 
-```bash
-INPUT="${ARGUMENTS:-}"
-if [ -z "$INPUT" ]; then
-  echo "Error: PR番号を指定してください（例: /codex-review-pr 123 または /codex-review-pr owner/repo#123）"
-  exit 1
-fi
-
-# GitHub URL形式をパース（例: https://github.com/owner/repo/pull/123）
-if [[ "$INPUT" =~ github\.com/([^/]+/[^/]+)/pull/([0-9]+) ]]; then
-  REPO="${BASH_REMATCH[1]}"
-  PR_NUM="${BASH_REMATCH[2]}"
-  echo "Repository: $REPO"
-  echo "PR Number: $PR_NUM"
-# owner/repo#123 または owner/repo 123 形式をパース
-elif [[ "$INPUT" =~ ^([^/#[:space:]]+/[^#[:space:]]+)[#[:space:]]([0-9]+)$ ]]; then
-  REPO="${BASH_REMATCH[1]}"
-  PR_NUM="${BASH_REMATCH[2]}"
-  echo "Repository: $REPO"
-  echo "PR Number: $PR_NUM"
-elif [[ "$INPUT" =~ ^[0-9]+$ ]]; then
-  REPO=""
-  PR_NUM="$INPUT"
-  echo "Repository: (current)"
-  echo "PR Number: $PR_NUM"
-else
-  echo "Error: 無効なフォーマットです。以下の形式で指定してください:"
-  echo "  /codex-review-pr 123"
-  echo "  /codex-review-pr owner/repo#123"
-  echo "  /codex-review-pr owner/repo 123"
-  echo "  /codex-review-pr https://github.com/owner/repo/pull/123"
-  exit 1
-fi
-```
-
-### Step 2: PR の情報を取得
+### Step 2: スクリプト実行
 
 ```bash
-if [ -n "$REPO" ]; then
-  gh pr view "$PR_NUM" -R "$REPO" --json title,body,baseRefName,headRefName
-else
-  gh pr view "$PR_NUM" --json title,body,baseRefName,headRefName
-fi
+bash ~/.claude/scripts/codex-review-pr.sh "$ARGUMENTS"
 ```
 
-### Step 3: 対象リポジトリに移動して `codex exec review` を実行
+- `timeout: 600000`（10 分）でフォアグラウンド実行する
+- スクリプトの **stdout 末尾の 1 行が最終レビューファイルパス**
+- 進捗ログは stderr に出る（Codex の探索ログ含む）
 
-**重要**: `codex exec --full-auto "$PROMPT"` は Claude Code の Bash ツール経由だと stdin が閉じられず EOF 待ちでハングする。必ず `codex exec review` サブコマンドを使うこと。
+### Step 3: レビュー結果の表示
 
-```bash
-# base/head ブランチ名を取得
-if [ -n "$REPO" ]; then
-  BASE_BRANCH=$(gh pr view "$PR_NUM" -R "$REPO" --json baseRefName --jq '.baseRefName')
-  HEAD_BRANCH=$(gh pr view "$PR_NUM" -R "$REPO" --json headRefName --jq '.headRefName')
+スクリプト stdout 最終行のパスを `Read` で読み、内容をユーザーに転載する。
+Codex の出力は `## Critical / Important / Minor / Notes` 形式（`~/.codex/AGENTS.md` で規定）。
 
-  # ローカルリポジトリパスを解決（org/repo → ~/dev/<org>/<repo-name> or ~/dev/<repo-name>）
-  REPO_NAME=$(echo "$REPO" | cut -d'/' -f2)
-  ORG_NAME=$(echo "$REPO" | cut -d'/' -f1)
+報告フォーマット:
 
-  LOCAL_PATH=""
-  for CANDIDATE in \
-    "$HOME/dev/$ORG_NAME/$REPO_NAME" \
-    "$HOME/dev/stremix/$REPO_NAME" \
-    "$HOME/dev/$REPO_NAME" \
-    "$HOME/src/$REPO_NAME"; do
-    if [ -d "$CANDIDATE/.git" ]; then
-      LOCAL_PATH="$CANDIDATE"
-      break
-    fi
-  done
+```
+## PR
+[<title>](<PR URL>)
 
-  if [ -z "$LOCAL_PATH" ]; then
-    echo "Error: ローカルリポジトリが見つかりません: $REPO_NAME"
-    echo "事前に clone してください: gh repo clone $REPO"
-    exit 1
-  fi
+## Codex Review
 
-  cd "$LOCAL_PATH"
-  git fetch origin "$BASE_BRANCH" "$HEAD_BRANCH"
-  git checkout "$HEAD_BRANCH"
-else
-  BASE_BRANCH=$(gh pr view "$PR_NUM" --json baseRefName --jq '.baseRefName')
-  HEAD_BRANCH=$(gh pr view "$PR_NUM" --json headRefName --jq '.headRefName')
-  git fetch origin "$BASE_BRANCH" "$HEAD_BRANCH"
-  git checkout "$HEAD_BRANCH"
-fi
-
-codex exec review --full-auto --base "origin/$BASE_BRANCH" "$(cat ~/.codex/prompts/review-pr.md)"
+<ファイル内容をそのまま貼る>
 ```
 
-**注意**: `codex exec review` はフォアグラウンド（`timeout: 300000`）で実行すること。バックグラウンドだとユーザーが次のメッセージを送るまで完了通知が届かず、会話が止まる。
+問題が無ければ Codex は `No issues found.` を返す。その場合はその旨を伝える。
 
-レビュー結果をユーザーに報告してください。
+## 設計メモ
 
----
-
-## AskUserQuestion の使用場面
-
-### リポジトリ選択が必要な場合
-
-引数がなく、複数のリポジトリが想定される場合:
-
-```typescript
-AskUserQuestion({
-  questions: [
-    {
-      question: 'どのリポジトリの PR をレビューしますか？',
-      header: 'Repository',
-      multiSelect: false,
-      options: [
-        {
-          label: '現在のリポジトリ (Recommended)',
-          description: 'カレントディレクトリの git リポジトリを使用',
-        },
-        {
-          label: 'リポジトリを指定',
-          description: 'owner/repo 形式でリポジトリを指定',
-        },
-      ],
-    },
-  ],
-});
-```
-
-### PR 番号の確認
-
-引数が不完全な場合:
-
-```typescript
-AskUserQuestion({
-  questions: [
-    {
-      question: 'レビューする PR 番号を入力してください',
-      header: 'PR Number',
-      multiSelect: false,
-      options: [
-        {
-          label: '最新の PR',
-          description: 'このリポジトリの最新 PR を取得',
-        },
-        {
-          label: 'PR を指定',
-          description: 'PR 番号を入力（例: 123）',
-        },
-      ],
-    },
-  ],
-});
-```
+- **prompt 引数を渡さない**: `codex exec review` は `--base` と PROMPT 引数が排他のため
+- **隔離 = 一時 worktree**: `${TMPDIR}/codex-review-pr-<num>` に detached worktree を作って codex を実行。元リポの node_modules や兄弟リポを物理的に見せない
+- **観点 = AGENTS.md 注入**: `~/dotfiles/codex/AGENTS.md` を worktree ルートに複製して Codex に読ませる（`~/.codex/AGENTS.md` グローバルは [openai/codex#8759](https://github.com/openai/codex/issues/8759) のバグでロードされない）
+- **指示と script の分離**: 観点 = `~/dotfiles/codex/AGENTS.md` / 実行 = `~/.claude/scripts/codex-review-pr.sh` / 呼び出し = 本ファイル
+- **`--output-last-message`**: 最終結論のみをファイル化。codex の探索ログを context に取り込まない
