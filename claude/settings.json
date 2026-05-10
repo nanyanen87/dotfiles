@@ -126,7 +126,7 @@
   },
   "language": "japanese",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "advisorModel": "opus",
   "theme": "dark",
   "preferredNotifChannel": "iterm2",
